@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        label {
+            display: block;
+        }
+
+        #img-container {
+            width: max-content;
+            height: max-content;
+            display: flex;
+            margin: 20px 0;
+        }
+
+        #img-to-modify {
+            flex: 1;
+        }
+    </style>
+    <title>Puck Tester</title>
+</head>
+<body>
+    <div id="controls">
+        <label id="borderRadius-lbl">borderRadius</label>
+        <input id="borderRadius" type="range" min="0" max="50" value="50"/>
+
+        <h2>Padding</h2>
+        <label id="paddingTop-lbl">paddingTop</label>
+        <input id="paddingTop" class="paddingCtrl" type="range" min="0" max="500" value="5">
+
+        <label id="paddingRight-lbl">paddingRight</label>
+        <input id="paddingRight" class="paddingCtrl" type="range" min="0" max="500" value="20">
+        
+        <label id="paddingBottom-lbl">paddingBottom</label>
+        <input id="paddingBottom" class="paddingCtrl" type="range" min="0" max="500" value="20">
+
+        <label id="paddingLeft-lbl">paddingLeft</label>
+        <input id="paddingLeft" class="paddingCtrl" type="range" min="0" max="500" value="5"><br/>
+        <button id="puckify" onclick="puckifyImage()">Puck-ify image</button>
+        <button id="inverse-puckify" onclick="inversePuckifyImage()">Inverse Puck-ify Image</button>
+    </div>
+    <h2 style="margin-top: 50px;">Image Result</h2>
+    <div id="img-container">
+        <img id="img-to-modify" src="/logo.png" alt="Logo">
+    </div>
+    
+    <script>
+        const controls = document.querySelector('#controls').getElementsByTagName('input');
+        const sliderLabels = document.querySelector('#controls').getElementsByTagName('label');
+        const img = document.querySelector('#img-to-modify');
+
+        function getUnit(elementId) {
+            return elementId == "borderRadius" ? "%" : "px";
+        }
+
+        // padding: 10% 40% 40% 10%;
+        function puckifyImage() {
+            document.querySelector('#borderRadius').value = 50;
+            const paddingCtrls = document.getElementsByClassName('paddingCtrl');
+            [...paddingCtrls].forEach((elem) => {
+                switch (elem.id) {
+                    case "paddingTop":
+                        elem.value = (img.naturalHeight / 100) * 10;
+                        break;
+                    case "paddingRight":
+                        elem.value = (img.naturalHeight / 100) * 40;
+                        break;
+                    case "paddingBottom":
+                        elem.value = (img.naturalHeight / 100) * 40;
+                        break;
+                    case "paddingLeft":
+                        elem.value = (img.naturalHeight / 100) * 10;
+                        break;
+                }
+            });
+            sync();
+        }
+
+        // padding: 30% 10% 10% 30%
+        function inversePuckifyImage() {
+            document.querySelector('#borderRadius').value = 50;
+            const paddingCtrls = document.getElementsByClassName('paddingCtrl');
+            [...paddingCtrls].forEach((elem) => {
+                switch (elem.id) {
+                    case "paddingTop":
+                        elem.value = (img.naturalHeight / 100) * 30;
+                        break;
+                    case "paddingRight":
+                        elem.value = (img.naturalHeight / 100) * 10;
+                        break;
+                    case "paddingBottom":
+                        elem.value = (img.naturalHeight / 100) * 10;
+                        break;
+                    case "paddingLeft":
+                        elem.value = (img.naturalHeight / 100) * 30;
+                        break;
+                }
+            });
+            sync();
+        }
+
+        // Sync control values with image styling; Border radius is not 0 by default
+        function sync() {
+            [...controls].forEach((elem) => { img.style[elem.id] = elem.value + getUnit(elem.id) });
+            [...sliderLabels].forEach((elem) => { elem.textContent = `${elem.id.split('-lbl')[0]}: ${elem.nextElementSibling.value}${getUnit(elem.id.split('-lbl')[0])}` });
+        }
+
+        [...controls].forEach((elem) => elem.addEventListener('input', function (e) {
+            img.style[e.target.id] = e.target.value + getUnit(e.target.id);
+            // Update Label
+            const label = document.querySelector(`#${e.target.id}-lbl`);
+            label.textContent = `${e.target.id}: ${e.target.value}${getUnit(e.target.id)}`;
+        }));
+
+        sync();
+    </script>
+</body>
+</html>
