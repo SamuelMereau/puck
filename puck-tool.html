@@ -13,6 +13,7 @@
             width: max-content;
             height: max-content;
             display: flex;
+            overflow: hidden;
             margin: 20px 0;
         }
 
@@ -25,26 +26,40 @@
 <body>
     <div id="controls">
         <label id="borderRadius-lbl">borderRadius</label>
-        <input id="borderRadius" type="range" min="0" max="50" value="50"/>
+        <input id="borderRadius" type="range" min="0" max="50" value="0"/>
 
         <h2>Padding</h2>
         <label id="paddingTop-lbl">paddingTop</label>
-        <input id="paddingTop" class="paddingCtrl" type="range" min="0" max="500" value="5">
+        <input id="paddingTop" class="paddingCtrl" type="range" min="0" max="500" value="0">
 
         <label id="paddingRight-lbl">paddingRight</label>
-        <input id="paddingRight" class="paddingCtrl" type="range" min="0" max="500" value="20">
+        <input id="paddingRight" class="paddingCtrl" type="range" min="0" max="500" value="0">
         
         <label id="paddingBottom-lbl">paddingBottom</label>
-        <input id="paddingBottom" class="paddingCtrl" type="range" min="0" max="500" value="20">
+        <input id="paddingBottom" class="paddingCtrl" type="range" min="0" max="500" value="0">
 
         <label id="paddingLeft-lbl">paddingLeft</label>
-        <input id="paddingLeft" class="paddingCtrl" type="range" min="0" max="500" value="5"><br/>
+        <input id="paddingLeft" class="paddingCtrl" type="range" min="0" max="500" value="0"><br/>
+
+        <h2>Margin</h2>
+        <label id="marginTop-lbl">marginTop</label>
+        <input id="marginTop" class="marginCtrl" type="range" min="-500" max="500" value="0">
+
+        <label id="marginRight-lbl">marginRight</label>
+        <input id="marginRight" class="marginCtrl" type="range" min="-500" max="500" value="0">
+
+        <label id="marginBottom-lbl">marginBottom</label>
+        <input id="marginBottom" class="marginCtrl" type="range" min="-500" max="500" value="0">
+
+        <label id="marginLeft-lbl">marginLeft</label>
+        <input id="marginLeft" class="marginCtrl" type="range" min="-500" max="500" value="0"><br/><br/>
+
         <button id="puckify" onclick="puckifyImage()">Puck-ify image</button>
         <button id="inverse-puckify" onclick="inversePuckifyImage()">Inverse Puck-ify Image</button>
     </div>
     <h2 style="margin-top: 50px;">Image Result</h2>
     <div id="img-container">
-        <img id="img-to-modify" src="/logo.png" alt="Logo">
+        <img id="img-to-modify" src="https://sammereau.netlify.app/nextimg/%2Ficon.png/260/75?url=%2Ficon.png&w=96&q=75" alt="Logo">
     </div>
     
     <script>
@@ -76,6 +91,7 @@
                         break;
                 }
             });
+            alignImage();
             sync();
         }
 
@@ -99,7 +115,49 @@
                         break;
                 }
             });
+            inverseAlignImage();
             sync();
+        }
+
+        // Uses margin to align the image to the top left corner
+        function alignImage() {
+            const marginCtrls = document.getElementsByClassName('marginCtrl');
+            [...marginCtrls].forEach((elem) => {
+                switch (elem.id) {
+                    case "marginTop":
+                        elem.value = (img.naturalHeight / 100) * -10;
+                        break;
+                    case "marginRight":
+                        elem.value = 0;
+                        break;
+                    case "marginBottom":
+                        elem.value = 0;
+                        break;
+                    case "marginLeft":
+                        elem.value = (img.naturalHeight / 100) * -10;
+                        break;
+                }
+            });
+        }
+
+        function inverseAlignImage() {
+            const marginCtrls = document.getElementsByClassName('marginCtrl');
+            [...marginCtrls].forEach((elem) => {
+                switch (elem.id) {
+                    case "marginTop":
+                        elem.value = (img.naturalHeight / 100) * -30;
+                        break;
+                    case "marginRight":
+                        elem.value = 0;
+                        break;
+                    case "marginBottom":
+                        elem.value = 0;
+                        break;
+                    case "marginLeft":
+                        elem.value = (img.naturalHeight / 100) * -30;
+                        break;
+                }
+            });
         }
 
         // Sync control values with image styling; Border radius is not 0 by default
