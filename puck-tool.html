@@ -20,8 +20,14 @@
         #img-to-modify {
             flex: 1;
         }
+
+        #generated-img-container {
+            width: max-content;
+            height: max-content;
+        }
     </style>
     <title>Puck Tester</title>
+    <script src="./dom-to-image.js" type="text/javascript"></script>
 </head>
 <body>
     <div id="controls">
@@ -56,19 +62,36 @@
 
         <button id="puckify" onclick="puckifyImage()">Puck-ify image</button>
         <button id="inverse-puckify" onclick="inversePuckifyImage()">Inverse Puck-ify Image</button>
+        <button id="align-image" onclick="alignImage()">Align Image</button>
+        <button id="convert-image" onclick="convertImage()">Convert Out To SVG</button>
     </div>
-    <h2 style="margin-top: 50px;">Image Result</h2>
+    <h2 style="margin-top: 50px;">Simulated Result</h2>
     <div id="img-container">
-        <img id="img-to-modify" src="https://sammereau.netlify.app/nextimg/%2Ficon.png/260/75?url=%2Ficon.png&w=96&q=75" alt="Logo">
+        <img id="img-to-modify" src="/logo.png" width="250" height="250" alt="Logo">
     </div>
+    <h2 style="margin-top: 50px;">Generated Result</h2>
+    <div id="generated-img-container"></div>
     
     <script>
         const controls = document.querySelector('#controls').getElementsByTagName('input');
         const sliderLabels = document.querySelector('#controls').getElementsByTagName('label');
         const img = document.querySelector('#img-to-modify');
 
+        /** Returns which unit should be used with certain CSS properties */
         function getUnit(elementId) {
             return elementId == "borderRadius" ? "%" : "px";
+        }
+
+        /** Gets the currently set padding values and returns them as an object*/
+        function getPadding() {
+            const img = document.querySelector('#img-to-modify');
+            const imgStyle = window.getComputedStyle(img);
+            return { 
+                paddingTop: parseInt(imgStyle.paddingTop), 
+                paddingRight: parseInt(imgStyle.paddingRight),
+                paddingBottom: parseInt(imgStyle.paddingBottom),
+                paddingLeft: parseInt(imgStyle.paddingLeft)
+            }
         }
 
         // padding: 10% 40% 40% 10%;
@@ -78,21 +101,21 @@
             [...paddingCtrls].forEach((elem) => {
                 switch (elem.id) {
                     case "paddingTop":
-                        elem.value = (img.naturalHeight / 100) * 10;
+                        elem.value = (img.height / 100) * 10;
                         break;
                     case "paddingRight":
-                        elem.value = (img.naturalHeight / 100) * 40;
+                        elem.value = (img.height / 100) * 40;
                         break;
                     case "paddingBottom":
-                        elem.value = (img.naturalHeight / 100) * 40;
+                        elem.value = (img.height / 100) * 40;
                         break;
                     case "paddingLeft":
-                        elem.value = (img.naturalHeight / 100) * 10;
+                        elem.value = (img.height / 100) * 10;
                         break;
                 }
             });
-            alignImage();
             sync();
+            alignImage();
         }
 
         // padding: 30% 10% 10% 30%
@@ -102,65 +125,73 @@
             [...paddingCtrls].forEach((elem) => {
                 switch (elem.id) {
                     case "paddingTop":
-                        elem.value = (img.naturalHeight / 100) * 30;
+                        elem.value = (img.height / 100) * 30;
                         break;
                     case "paddingRight":
-                        elem.value = (img.naturalHeight / 100) * 10;
+                        elem.value = (img.height / 100) * 10;
                         break;
                     case "paddingBottom":
-                        elem.value = (img.naturalHeight / 100) * 10;
+                        elem.value = (img.height / 100) * 10;
                         break;
                     case "paddingLeft":
-                        elem.value = (img.naturalHeight / 100) * 30;
+                        elem.value = (img.height / 100) * 30;
                         break;
                 }
             });
-            inverseAlignImage();
+            sync();
+            alignImage();
+        }
+
+        /** Sets all margins to 0 */
+        function resetAlignment() {
+            const marginCtrls = document.getElementsByClassName('marginCtrl');
+            [...marginCtrls].forEach((elem) => { elem.value = 0; });
+        }
+
+        /** Uses margin to align the image to the top left corner */
+        function alignImage() {
+            resetAlignment();
+            const marginCtrls = document.getElementsByClassName('marginCtrl');
+            [...marginCtrls].forEach((elem) => {
+                switch (elem.id) {
+                    case "marginTop":
+                        elem.value = -getPadding().paddingTop;
+                        break;
+                    case "marginRight":
+                        elem.value = -getPadding().paddingRight;
+                        break;
+                    case "marginBottom":
+                        elem.value = -getPadding().paddingBottom;
+                        break;
+                    case "marginLeft":
+                        elem.value = -getPadding().paddingLeft;
+                        break;
+                }
+            });
             sync();
         }
 
-        // Uses margin to align the image to the top left corner
-        function alignImage() {
-            const marginCtrls = document.getElementsByClassName('marginCtrl');
-            [...marginCtrls].forEach((elem) => {
-                switch (elem.id) {
-                    case "marginTop":
-                        elem.value = (img.naturalHeight / 100) * -10;
-                        break;
-                    case "marginRight":
-                        elem.value = 0;
-                        break;
-                    case "marginBottom":
-                        elem.value = 0;
-                        break;
-                    case "marginLeft":
-                        elem.value = (img.naturalHeight / 100) * -10;
-                        break;
-                }
-            });
+        /** Uses the dom-to-image library to convert an HTML element to an SVG */
+        function convertImage() {
+            alignImage();
+            const container = document.querySelector('#generated-img-container');
+            domtoimage.toSvg(document.querySelector('#img-to-modify'))
+                .then(function (svg) {
+                    if (container.hasChildNodes()) {
+                        container.querySelectorAll('*').forEach(node => node.remove());
+                    }
+                    const svgNode = document.createElement('svg');
+                    svgNode.innerHTML = svg;
+                    svgNode.crossOrigin = 'Anonymous';
+                    container.appendChild(svgNode.childNodes[1]);
+                    const generatedSvg = document.querySelector('#generated-img-container svg');
+                    generatedSvg.childNodes[0].childNodes[0].removeAttribute('id');
+                    generatedSvg.setAttribute("width", img.clientWidth - (parseInt(getPadding().paddingLeft) + parseInt(getPadding().paddingRight)));
+                    generatedSvg.setAttribute("height", img.clientHeight - (parseInt(getPadding().paddingTop) + parseInt(getPadding().paddingBottom)));
+                });
         }
 
-        function inverseAlignImage() {
-            const marginCtrls = document.getElementsByClassName('marginCtrl');
-            [...marginCtrls].forEach((elem) => {
-                switch (elem.id) {
-                    case "marginTop":
-                        elem.value = (img.naturalHeight / 100) * -30;
-                        break;
-                    case "marginRight":
-                        elem.value = 0;
-                        break;
-                    case "marginBottom":
-                        elem.value = 0;
-                        break;
-                    case "marginLeft":
-                        elem.value = (img.naturalHeight / 100) * -30;
-                        break;
-                }
-            });
-        }
-
-        // Sync control values with image styling; Border radius is not 0 by default
+        /** Sync control values with image styling; Border radius is not 0 by default */
         function sync() {
             [...controls].forEach((elem) => { img.style[elem.id] = elem.value + getUnit(elem.id) });
             [...sliderLabels].forEach((elem) => { elem.textContent = `${elem.id.split('-lbl')[0]}: ${elem.nextElementSibling.value}${getUnit(elem.id.split('-lbl')[0])}` });
