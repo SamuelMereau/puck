@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "API to return an image with the puck look",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon app.js"
   },
