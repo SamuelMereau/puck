@@ -2,10 +2,9 @@
   "name": "puck",
   "version": "1.0.0",
   "description": "API to return an image with the puck look",
-  "main": "src/startup/routes.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "build": "netlify-lambda build src",
     "start": "nodemon --experimental-json-modules app.js"
   },
   "repository": {
@@ -22,7 +21,6 @@
     "cors": "^2.8.5",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
-    "netlify-lambda": "^2.0.15",
     "nodemon": "^2.0.15",
     "path": "^0.12.7",
     "request": "^2.88.2",
