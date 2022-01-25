@@ -11,12 +11,13 @@ router.get('/:imgSize/:imgHeight?', async function (req, res) {
     try {
         const url = req.query.url === undefined ? 'https://doggo.ninja/8191iq.png' : req.query.url;
         let inverse = req.query.inverse === undefined ? 'false' : req.query.inverse;
-        if (inverse !== 'true' || inverse !== 'false') { inverse = 'false'; }
-        const imgSize = isNaN(parseInt(req.params.imgSize)) ? 100 : req.params.imgSize;
+        
+        const imgSize = req.params.imgSize;
         const imgHeight = req.params.imgHeight == undefined ? imgSize : req.params.imgHeight;
-        console.log({url, imgSize, imgHeight});
+        console.log({url, imgSize, imgHeight, inverse});
         
         let data;
+        const { padding, margin } = inverse === 'true' ? inversePuck(imgHeight) : puck(imgHeight);
         request({
             url: url,
             encoding: null
@@ -27,7 +28,11 @@ router.get('/:imgSize/:imgHeight?', async function (req, res) {
             }
         }).on('complete', () => {
             const element = `
-            <svg width="${imgSize}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg" style="border-radius: 50%; padding: ${puck(imgSize).paddingTop}px ${puck(imgSize).paddingRight}px ${puck(imgSize).paddingBottom}px ${puck(imgSize).paddingLeft}px; margin: ${-puck(imgSize).paddingTop}px ${-puck(imgSize).paddingRight}px ${-puck(imgSize).paddingBottom}px ${-puck(imgSize).paddingLeft}px;">
+            <svg width="${imgSize}" height="${imgHeight}" xmlns="http://www.w3.org/2000/svg" style="
+                border-radius: 50%; 
+                padding: ${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px; 
+                margin: ${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px;
+                ">
                 <image href="${data}" height="100%"/>
             </svg>`
             res.setHeader('content-type', 'image/svg+xml');

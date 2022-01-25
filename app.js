@@ -1,5 +1,5 @@
 import express from 'express';
-import startup from './startup/routes.js';
+import startup from './src/startup/routes.js';
 const app = express();
 
 startup(app);
