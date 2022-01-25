@@ -1,8 +1,5 @@
 import express from 'express';
-import startup from './src/startup/routes.js';
-const app = express();
-
-startup(app);
+import app from './src/startup/routes.js';
 
 const port = process.env.PORT || 3000;
 

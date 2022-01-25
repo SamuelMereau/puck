@@ -37,6 +37,7 @@ router.get('/:imgSize/:imgHeight?', async function (req, res) {
             </svg>`
             res.setHeader('content-type', 'image/svg+xml');
             res.status(200).send(element);
+            res.end();
         });
     } catch (e) {
         console.log(`Error: ${e}`);
