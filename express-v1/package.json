@@ -1,0 +1,29 @@
+{
+  "name": "puck",
+  "version": "1.0.0",
+  "description": "API to return an image with the puck look",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon --experimental-json-modules app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamuelMereau/puck.git"
+  },
+  "author": "Samuel Mereau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SamuelMereau/puck/issues"
+  },
+  "homepage": "https://github.com/SamuelMereau/puck#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "sharp": "^0.29.3"
+  }
+}
