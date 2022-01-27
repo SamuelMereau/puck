@@ -1,8 +1,0 @@
-name = "puck"
-type = "webpack"
-
-account_id = "38e9fa784edd268a409a24dd9cbbc832"
-workers_dev = true
-route = ""
-zone_id = ""
-compatibility_date = "2022-01-25"
