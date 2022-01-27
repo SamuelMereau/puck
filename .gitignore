@@ -159,5 +159,5 @@ sketch
 
 # Cloudflare Workers
 .cargo-ok
-/cfWorker/puck/worker
-/cfWorker/puck/wrangler.toml
+/worker
+/src/wrangler.toml
