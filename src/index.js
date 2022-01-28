@@ -2,6 +2,7 @@
 import { Router } from 'itty-router'
 const router = Router();
 
+import validate from './helpers/validate.js';
 import puck from './helpers/imgVariants/puck.js';
 import inversePuck from './helpers/imgVariants/inversePuck.js';
 import createSvg from './helpers/createSvg.js';
@@ -17,7 +18,7 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
   const imgSize = params.imgSize,
         imgHeight = params.imgHeight === undefined ? imgSize : params.imgHeight,
         // Queries
-        url = query.url,
+        url = await validate.url(query.url) == false ? 'https://doggo.ninja/D1sIG3.jpg' : query.url,
         inverse = query.inverse;
   console.log({ imgSize, imgHeight, url, inverse });
   
@@ -26,6 +27,9 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
   try {
     let data;
 
+    // Debug
+    console.time('imgFetch');
+
     const img = await fetch(url)
       .then(
         async function (response) {
@@ -33,7 +37,7 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
             console.log('An error occurred fetching the image, with status code: ' + response.status);
             return;
           }
-          
+
           function base64Encode(buf) {
             let string = '';
             (new Uint8Array(buf)).forEach(
@@ -47,6 +51,10 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
           data = `data:${response.headers.get('content-type')};base64,${base64Encode(await response.arrayBuffer())}`;            
         }
       );
+
+    // Debug
+    console.timeEnd('imgFetch');
+    
     const element = createSvg({
       width: imgSize,
       height: imgHeight,
@@ -54,6 +62,7 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
       margin: margin,
       imgData: data
     });
+
     return new Response(element, { status: 200, headers: { 'content-type': 'image/svg+xml' }});
   } catch (ex) {
     console.log("caught error: " + ex);
