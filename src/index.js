@@ -85,7 +85,6 @@ function errorHandler(error) {
 }
 
 function MethodNotAllowed(request) {
-  console.log('this function was entered')
   return new Response(`Method ${request.method} not allowed`, {
     status: 405
   });
