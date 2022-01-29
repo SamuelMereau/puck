@@ -4,7 +4,11 @@ Puck Image Modification API using Cloudflare Workers.
 
 ### Usage
 
-Visit https://puck.samuelmereau.workers.dev/
+Use the API endpoint as the source of an image, such as an `img` element in HTML
+
+```html
+<img src="https://puck.samuelmereau.workers.dev/50?url=https://doggo.ninja/CZv83D.png">
+```
 
 URL Params & Queries allowed:
 
