@@ -14,7 +14,7 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
   if (params.imgSize == 'favicon.ico' || params.imgHeight == 'favicon.ico') {
     return;
   }
-
+        // Params
   const imgSize = params.imgSize,
         imgHeight = params.imgHeight === undefined ? imgSize : params.imgHeight,
         // Queries
@@ -27,15 +27,11 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
   try {
     let data;
 
-    // Debug
-    console.time('imgFetch');
-
     const img = await fetch(url)
       .then(
         async function (response) {
           if (response.status !== 200) {
-            console.log('An error occurred fetching the image, with status code: ' + response.status);
-            return;
+            throw new Error('Bad Request');
           }
 
           function base64Encode(buf) {
@@ -52,9 +48,6 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
         }
       );
 
-    // Debug
-    console.timeEnd('imgFetch');
-    
     const element = createSvg({
       width: imgSize,
       height: imgHeight,
@@ -64,14 +57,36 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
     });
 
     return new Response(element, { status: 200, headers: { 'content-type': 'image/svg+xml' }});
-  } catch (ex) {
-    console.log("caught error: " + ex);
+  } catch (err) {
+    throw new Error(err);
   }
 });
 
 // Handles exceptions where the router cannot identify a given route, instead of giving a CloudFlare error screen.
-router.all("*", () => new Response("404, not found!", { status: 404 }))
+router.all("*", () => new Response("404, not found!", { status: 404 }));
 
 addEventListener('fetch', (e) => {
-  e.respondWith(router.handle(e.request))
-})
+  // Only allow GET requests to the API
+  if(e.request.method == 'GET') {
+    e.respondWith(
+      router
+        .handle(e.request)
+        .catch(errorHandler)
+    )
+  } else {
+     e.respondWith(MethodNotAllowed(e.request));
+  }
+});
+
+function errorHandler(error) {
+  return new Response(`An error was encounted: ${error}`, {
+    status: error.status || 500
+  });
+}
+
+function MethodNotAllowed(request) {
+  console.log('this function was entered')
+  return new Response(`Method ${request.method} not allowed`, {
+    status: 405
+  });
+}

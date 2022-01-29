@@ -4,10 +4,6 @@
  * @returns {bool} Returns true if URL responded with an OK status code
  */
 async function url(url) {
-    
-    // Debug
-    console.time('imgValidate');
-
     let isValid = false;
     await fetch(url)
         .then((res) => {
@@ -16,9 +12,6 @@ async function url(url) {
             }
         })
         .catch((err) => { throw new Error(err) });
-
-    // Debug
-    console.timeEnd('imgValidate');
 
     return isValid;
 }
