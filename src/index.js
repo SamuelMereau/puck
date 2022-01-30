@@ -78,12 +78,22 @@ addEventListener('fetch', (e) => {
   }
 });
 
+/**
+ * Handles caught errors from the API
+ * @param {Error} error Error object
+ * @returns {Response} Error response
+ */
 function errorHandler(error) {
-  return new Response(`An error was encounted: ${error}`, {
+  return new Response(`An error was encountered on the server. Please review the URL and retry.`, {
     status: error.status || 500
   });
 }
 
+/**
+ * Returns a Method Not Allowed status 
+ * @param {Request} request Request object
+ * @returns {Response} Method Not Allowed response
+ */
 function MethodNotAllowed(request) {
   return new Response(`Method ${request.method} not allowed`, {
     status: 405
