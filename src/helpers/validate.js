@@ -8,7 +8,7 @@ async function url(url) {
     await fetch(url)
         .then((res) => {
             if (hasAllowedMimeType(res.headers.get('Content-Type'))) {
-                isValid = res.ok == true ? true : false; 
+                isValid = res.ok; 
             }
         })
         .catch((err) => { throw new Error(err) });
@@ -23,7 +23,7 @@ async function url(url) {
  */
 function hasAllowedMimeType(contentType) {
     const pattern = /(image\/)\b(?:gif|jpeg|png|svg\+xml)/g;
-    const isAllowed = pattern.test(contentType) ? true : false; 
+    const isAllowed = pattern.test(contentType); 
     console.log({contentType, isAllowed});
     return isAllowed;
 }
