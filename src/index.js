@@ -67,17 +67,22 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
   }
 });
 
+// Redirect root route to the GitHub page
+router.get("/", async (req) => {
+  return Response.redirect("https://github.com/SamuelMereau/puck", 302);
+});
+
 // Handles exceptions where the router cannot identify a given route, instead of giving a CloudFlare error screen.
 router.all("*", () => new Response("404, not found!", { status: 404 }));
 
 addEventListener('fetch', (e) => {
   // Only allow GET requests to the API
   if(e.request.method == 'GET') {
-      e.respondWith(
-        router
-          .handle(e.request)
-          .catch(errorHandler)
-      );
+    e.respondWith(
+      router
+        .handle(e.request)
+        .catch(errorHandler)
+    );
   } else {
      e.respondWith(MethodNotAllowed(e.request));
   }
