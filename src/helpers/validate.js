@@ -5,6 +5,11 @@
  */
 async function url(url) {
     let isValid = false;
+
+    if (url == undefined) {
+        return isValid;
+    }
+
     await fetch(url)
         .then((res) => {
             if (hasAllowedMimeType(res.headers.get('Content-Type'))) {
@@ -12,7 +17,6 @@ async function url(url) {
             }
         })
         .catch((err) => { throw new Error(err) });
-
     return isValid;
 }
 
@@ -28,4 +32,17 @@ function hasAllowedMimeType(contentType) {
     return isAllowed;
 }
 
-export default { url }
+/**
+ * Validates whether a string is numeric
+ * @param {string} string Value to check
+ * @returns {bool} Returns true if the string is a number
+ */
+function isNumeric (string) {
+    if (typeof string != "string") {
+        return false;
+    }
+
+    return !isNaN(string) && !isNaN(parseFloat(string));
+}
+
+export default { url, isNumeric }

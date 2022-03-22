@@ -4,8 +4,8 @@
  * @returns {Object} Paddings and margins required to create image modification
  */
 export default function inversePuck(imgHeight) {
-    const topLeftPadding = (imgHeight / 100) * 30;
-    const rightBottomPadding =  (imgHeight / 100) * 10;
+    const topLeftPadding = Math.round((imgHeight / 100) * 30);
+    const rightBottomPadding = Math.round((imgHeight / 100) * 10);
     return {
         "padding" : {
             top: topLeftPadding,

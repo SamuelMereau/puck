@@ -14,12 +14,17 @@ router.get('/:imgSize/:imgHeight?', async (req) => {
   if (params.imgSize == 'favicon.ico' || params.imgHeight == 'favicon.ico') {
     return;
   }
+
+  if (validate.isNumeric(params.imgSize) == false || params.imgHeight != undefined ? validate.isNumeric(params.imgHeight) == false : false) {
+    return BadRequest();
+  }
         // Params
-  const imgSize = params.imgSize,
-        imgHeight = params.imgHeight === undefined ? imgSize : params.imgHeight,
+  const imgSize = parseInt(params.imgSize),
+        imgHeight = params.imgHeight == undefined ? imgSize : parseInt(params.imgHeight),
         // Queries
         url = await validate.url(query.url) == false ? 'https://doggo.ninja/D1sIG3.jpg' : query.url,
         inverse = query.inverse;
+
   console.log({ imgSize, imgHeight, url, inverse });
   
   const { padding, margin } = inverse == 'true' ? inversePuck(imgHeight) : puck(imgHeight); 
@@ -68,11 +73,11 @@ router.all("*", () => new Response("404, not found!", { status: 404 }));
 addEventListener('fetch', (e) => {
   // Only allow GET requests to the API
   if(e.request.method == 'GET') {
-    e.respondWith(
-      router
-        .handle(e.request)
-        .catch(errorHandler)
-    )
+      e.respondWith(
+        router
+          .handle(e.request)
+          .catch(errorHandler)
+      );
   } else {
      e.respondWith(MethodNotAllowed(e.request));
   }
@@ -97,5 +102,15 @@ function errorHandler(error) {
 function MethodNotAllowed(request) {
   return new Response(`Method ${request.method} not allowed`, {
     status: 405
+  });
+}
+
+/**
+ * Returns a Bad Request status
+ * @returns {Response} Bad Request response 
+ */
+function BadRequest() {
+  return new Response(`Bad Request, please review the syntax of the URL.`, { 
+    status: 400 
   });
 }

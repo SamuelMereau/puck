@@ -8,12 +8,13 @@
  * @returns {string} Inline SVG Element
  */
 export default function createSvg({width, height, padding, margin, imgData}) {
-    return `
+    const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg" style="
         border-radius: 50%;
         padding: ${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px;
         margin: ${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px;
-        ">
+    ">
         <image href="${imgData}" height="100%"/>
     </svg>`;
+    return svg.replace(/\n/g,"").replace(/\s\s+/g, " ");
 }

@@ -4,8 +4,8 @@
  * @returns {Object} Paddings and margins required to create image modification
  */
 export default function puck(imgHeight) {
-    const topLeftPadding = (imgHeight / 100) * 10;
-    const rightBottomPadding =  (imgHeight / 100) * 40;
+    const topLeftPadding = Math.round((imgHeight / 100) * 10);
+    const rightBottomPadding =  Math.round((imgHeight / 100) * 40);
     return {
         "padding" : {
             top: topLeftPadding,
